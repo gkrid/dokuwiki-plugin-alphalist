@@ -27,71 +27,79 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
 
     function connectTo($mode) {
-	$this->Lexer->addSpecialPattern('\[alphalist .*?\]',$mode,'plugin_filterrss');
+	$this->Lexer->addSpecialPattern('\[alphalist .*?\]',$mode,'plugin_alphalist');
     }
 
-    function handle($match, $state, $pos, &$handler) {
-
-	$known_fileds = array('pubDate', 'title', 'description', 'link');
-	$opposite_signs = array('>' => '<', '<' => '>', '>=' => '<=', '<=' => '>=');
-
-	$exploded = explode(' ', $match);
-	$url = $exploded[1];
-
-	//we have no arguments
-	if(count($exploded) < 3)
+    function handle($match, $state, $pos, &$handler)
+    {
+	//remove ]
+	$match = substr($match, 0, -1);
+	$pages = explode(' ', $match);
+	//remove [alphalist
+	array_shift($pages);
+	$list = array();
+	foreach($pages as $v)
 	{
-	    //Remove ] from the end
-	    $url = substr($url, 0, -1);
-	    return array('url' => $url, 'conditions' => array());
-	}
-	array_shift($exploded);
-	array_shift($exploded);
-
-
-	$conditions = implode('', $exploded);
-	
-	//Remove ] from the end
-	$conditions = substr($conditions, 0, -1);
-
-	$cond_array = explode('&&', $conditions);
-
-	$cond_output = array();
-
-	foreach($cond_array as $cond)
-	{
-	    preg_match('/(.*?)(>|<|=|>=|<=)+(.*)/', $cond, $res);
-	    if(in_array($res[1], $known_fileds))
+	    $file = wikiFN($v);
+	    if(file_exists($file))
 	    {
-		$name = $res[1];
-		$value = $res[3];
-		$sign = $res[2];
-	    } elseif(in_array($res[3], $known_fileds))
-	    {
-		$name = $res[3];
-		$value = $res[1];
-		$sign = $opposite_signs[$res[2]];
-	    } else
-	    {
-		continue;
+		$content = file($file);
+		foreach($content as $row)
+		{
+		    if(preg_match('/^  (\-|\*)(.*)/', $row, $match))
+		    {
+			$list[] = $match[2];
+		    }
+		}
 	    }
-
-	    //remove "" and ''
-	    $value = str_replace(array('"', "'"), '', $value);
-
-	    if(!isset($cond_output[$name]))
-		$cond_output[$name] = array();
-
-		array_push($cond_output[$name], array($sign, $value));
 	}
-	return array('url' => $url, 'conditions' => $cond_output);
+	return $list;
     }
 
     function render($mode, &$renderer, $data) {
         if($mode == 'xhtml') {
 
 	    $alphalist =& plugin_load('helper', 'alphalist');
-	    $renderer->doc .= 'Mongo';
+
+	    if(count($data) > 0)
+	    {
+		sort($data);
+
+		$list_cont = '';
+
+		$first_letter = '';
+		$letter_change = false;
+
+		$req_first_letter = '/^.*?([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]).*$/u'; 
+		foreach($data as $v)
+		{
+		    //if dokuwiki link - get value
+		    if(strstr($v, '|'))
+		    {
+			$ex = explode('|', $v);
+			preg_match($req_first_letter, $ex[1], $letter);
+			$f_letter = $letter[1];
+		    } else
+		    {
+			//Get first letter that isn't wiki syntax
+			preg_match($req_first_letter, $v, $letter);
+			$f_letter = $letter[1];
+		    }
+		    if($f_letter != $first_letter)
+		    {
+			$letter_change = true;
+			$first_letter = $f_letter;
+		    }
+		    if($letter_change == true)
+		    {
+			$list_cont .= '==='.$first_letter."===\n";
+			$letter_change = false;
+		    }
+		    $list_cont .= '  - '.$v."\n";
+		}
+		$renderer->doc .= $alphalist->parse($list_cont);
+	    }
+
 	    return true;
         }
         return false;

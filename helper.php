@@ -21,14 +21,16 @@ class helper_plugin_alphalist extends dokuwiki_plugin
     function getMethods(){
       $result = array();
       $result[] = array(
-	'name'   => 'bbcode_parse',
-	'desc'   => 'parse bbcode to html',
-	'params' => array('bbcode_input' => 'string'),
-	'return' => array('html_output' => 'string'),
+	'name'   => 'parse',
+	'desc'   => 'change dokuwiki syntax to html',
+	'params' => array('string' => 'string'),
+	'return' => array('content' => 'string'),
       );
     }
-    function bbcode_parse($bbcode_input)
+    function parse($string)
     {
+	$info = array();
+	return p_render('xhtml',p_get_instructions($string),$info);
     }
 }
 
