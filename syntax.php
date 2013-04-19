@@ -37,21 +37,73 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
 	//remove ]
 	$match = substr($match, 0, -1);
-	$pages = explode(' ', $match);
+	$explode = explode(' ', $match);
 	//remove [alphalist
-	array_shift($pages);
+	array_shift($explode);
+
+	//join if splitet between {
+	
+	$pages = array();
+	$j = 0;
+	for($i=0;$i<count($explode);$i++,$j++)
+	{
+	    $pages[$j] = $explode[$i]; 
+	    //there is { in string
+	    if(strstr($explode[$i], '{') != false)
+	    {
+		//start imploding
+		do
+		{
+		    $i++;
+		    $pages[$j] .= ' '.$explode[$i];
+		} while(strstr($explode[$i], '}') == false);
+	    }
+	}
+
 	$list = array();
 	foreach($pages as $v)
 	{
+	    $section = false;
+	    //Get section
+	    if(preg_match('/^(.*?)\{(.*?)\}$/', $v, $data))
+	    {
+		$v = $data[1];
+		$section = $data[2];
+	    }
+
 	    $file = wikiFN($v);
 	    if(file_exists($file))
 	    {
 		$content = file($file);
-		foreach($content as $row)
+		if($section == false)
 		{
-		    if(preg_match('/^  (\-|\*)(.*)/', $row, $match))
+		    foreach($content as $row)
 		    {
-			$list[$alphalist->plain($match[2])] = $match[2];
+			if(preg_match('/^  (\-|\*)(.*)/', $row, $match))
+			{
+			    $list[$alphalist->plain($match[2])] = $match[2];
+			}
+		    }
+		} else
+		{
+		    //0 - waiting for header 1 - in header 
+		    $state = 0;
+		    foreach($content as $row)
+		    {
+			if($state == 0)
+			{
+			    if(strstr($row, $section))
+				$state++;
+			} else
+			{
+			    if(preg_match('/======.*?======/', $row))
+				break;
+
+			    if(preg_match('/^  (\-|\*)(.*)/', $row, $match))
+			    {
+				$list[$alphalist->plain($match[2])] = $match[2];
+			    }
+			}
 		    }
 		}
 	    }
@@ -66,7 +118,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
 	    if(count($data) > 0)
 	    {
-		ksort($data);
+		ksort($data, SORT_LOCALE_STRING);
 
 		$list_cont = '';
 
