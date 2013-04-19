@@ -1,0 +1,7 @@
+base alphalist
+author Szymon Olewniczak
+email szymon.olewniczak@rid.pl
+date 2013-04-19
+name alphalist
+desc Combine several dokuwiki list to alphabetical list.
+url http://www.dokuwiki.org/plugin:alphalist
