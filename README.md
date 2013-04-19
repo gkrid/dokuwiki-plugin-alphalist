@@ -5,4 +5,4 @@ README of alphalist dokuwiki plugin
 * This application is licenced under [GNU General Public License, Version 3.0]
 
 All documentation for this plugin can be found at
-http://www.dokuwiki.org/plugin:filterrss
+http://www.dokuwiki.org/plugin:alphalist

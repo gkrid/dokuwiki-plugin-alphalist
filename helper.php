@@ -26,11 +26,25 @@ class helper_plugin_alphalist extends dokuwiki_plugin
 	'params' => array('string' => 'string'),
 	'return' => array('content' => 'string'),
       );
+      $result[] = array(
+	'name'   => 'plain',
+	'desc'   => 'convert dokuwiki syntax to plain text',
+	'params' => array('string' => 'string'),
+	'return' => array('plain' => 'string'),
+      );
     }
     function parse($string)
     {
 	$info = array();
 	return p_render('xhtml',p_get_instructions($string),$info);
+    }
+    function plain($string)
+    {
+	$doku_inline_tags = array('**', '//', "''", '<del>', '</del>', ']]');
+	$plain = str_replace($doku_inline_tags, '', $string);
+	$req_link = '/\[\[(.*?\|)?/';
+	$plain = preg_replace($req_link, '', $plain);
+	return trim($plain);
     }
 }
 

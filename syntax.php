@@ -32,6 +32,9 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
     function handle($match, $state, $pos, &$handler)
     {
+
+	$alphalist =& plugin_load('helper', 'alphalist');
+
 	//remove ]
 	$match = substr($match, 0, -1);
 	$pages = explode(' ', $match);
@@ -48,7 +51,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 		{
 		    if(preg_match('/^  (\-|\*)(.*)/', $row, $match))
 		    {
-			$list[] = $match[2];
+			$list[$alphalist->plain($match[2])] = $match[2];
 		    }
 		}
 	    }
@@ -63,28 +66,16 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
 	    if(count($data) > 0)
 	    {
-		sort($data);
+		ksort($data);
 
 		$list_cont = '';
 
 		$first_letter = '';
 		$letter_change = false;
 
-		$req_first_letter = '/^.*?([a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]).*$/u'; 
-		foreach($data as $v)
+		foreach($data as $k => $v)
 		{
-		    //if dokuwiki link - get value
-		    if(strstr($v, '|'))
-		    {
-			$ex = explode('|', $v);
-			preg_match($req_first_letter, $ex[1], $letter);
-			$f_letter = $letter[1];
-		    } else
-		    {
-			//Get first letter that isn't wiki syntax
-			preg_match($req_first_letter, $v, $letter);
-			$f_letter = $letter[1];
-		    }
+		    $f_letter = mb_substr($k, 0, 1);
 		    if($f_letter != $first_letter)
 		    {
 			$letter_change = true;
