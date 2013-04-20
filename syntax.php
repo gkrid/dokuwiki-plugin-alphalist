@@ -37,15 +37,17 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
 	$alphalist =& plugin_load('helper', 'alphalist');
 
-	//remove [alphalistSPACE 
-	$match = substr($match, 11);
+	//remove [alphalist 
+	$match = substr($match, 10);
 	//remove ]
 	$match = substr($match, 0, -1);
+
+	$match = trim($match);
 
 	$pages = array();
 
 	// [alphalist] sytax
-	if($match == false)
+	if(empty($match))
 	{
 	    $pages[0][] = '';
 	    $pages[1][] = '';
