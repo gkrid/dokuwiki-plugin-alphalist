@@ -75,12 +75,14 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 	for($i=0;$i<count($pages[0]);$i++)
 	{
 	    if(empty($pages[0][$i]))
-		$v = $ID;
+		$page = $ID;
+	    else
+		$page = $pages[0][$i];
 
 	    //Get section
 	    $section = $pages[1][$i];
 
-	    $file = wikiFN($v);
+	    $file = wikiFN($page);
 	    if(file_exists($file))
 	    {
 		$content = file($file);
