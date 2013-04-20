@@ -6,3 +6,12 @@ README of alphalist dokuwiki plugin
 
 All documentation for this plugin can be found at
 http://www.dokuwiki.org/plugin:alphalist
+
+This is free and open source software. If you like and use it, flattr it ([flattr?][WhatisFlattr]). Thanks.
+
+[![][FlattrButton]][FlattrLink] 
+
+[WhatisFlattr]: http://en.wikipedia.org/wiki/Flattr
+[FlattrLink]: http://flattr.com/thing/1268782/
+
+[FlattrButton]: http://api.flattr.com/button/button-static-50x60.png

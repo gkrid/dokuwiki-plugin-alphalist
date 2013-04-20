@@ -32,12 +32,6 @@ class helper_plugin_alphalist extends dokuwiki_plugin
 	'params' => array('string' => 'string'),
 	'return' => array('plain' => 'string'),
       );
-      $result[] = array(
-	'name'   => 'ksort_hum',
-	'desc'   => 'key sort with polish charters',
-	'params' => array('string' => 'string'),
-	'return' => array('plain' => 'string'),
-      );
     }
     function parse($string)
     {
@@ -52,47 +46,5 @@ class helper_plugin_alphalist extends dokuwiki_plugin
 	$plain = preg_replace($req_link, '', $plain);
 	return trim($plain);
     }
-
-    function ksort_hun($array)
-    {
-	    uksort($array, 'helper_plugin_alphalist::huncmp');
-	    return $array;
-    }
-
-    function intcmp($a,$b,$ALP)
-    {
-	    if ($a==$b) return 0;
-	    $ALPL = strlen($ALP);
-
-	    $ap = $bp = -1;
-	    $i = 0;
-
-	    while (($i < $ALPL) and (($ap == -1) or ($bp == -1)))
-	    {
-		    if ($ALP[$i] == $a) $ap = $i;
-		    if ($ALP[$i] == $b) $bp = $i;
-		    $i++;
-	    }
-
-	    return($ap < $bp) ? -1 :1;
-    }
-
-    function huncmp($astring, $bstring)
-    {
-	    $ALP = "AaĄąBbCcĆćDdEeĘęFfGgHhIiJjKkLlŁłMmNnOoÓóPpQqRrSsŚśTtUuVvWwXxYyZzŹźŻż";
-
-	    //jeśli równe
-	    if ($astring == $bstring) return 0;
-
-	    //wykonuj na kazdym elemencie
-	    for ($i = 0; $i < strlen($astring) && $i < strlen($bstring) && $astring[$i] == $bstring[$i]; $i++);
-
-	    //jeśli takie same lecz jedna krótsza
-	    if ($astring[$i] == $bstring[$i]) return (strlen($astring) > $bstring) ? -1 : 1;
-
-	    //pierwszy różny znak
-	    return(helper_plugin_alphalist::intcmp($astring[$i], $bstring[$i], $ALP));
-    }
- 
 }
 

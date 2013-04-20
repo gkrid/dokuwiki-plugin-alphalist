@@ -96,7 +96,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 				$state++;
 			} else
 			{
-			    if(preg_match('/======.*?======/', $row))
+			    if(preg_match('/==.*?==/', $row))
 				break;
 
 			    if(preg_match('/^  (\-|\*)(.*)/', $row, $match))
@@ -112,6 +112,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
     }
 
     function render($mode, &$renderer, $data) {
+	setlocale(LC_COLLATE, $this->getConf('locale'));
         if($mode == 'xhtml') {
 
 	    $alphalist =& plugin_load('helper', 'alphalist');
