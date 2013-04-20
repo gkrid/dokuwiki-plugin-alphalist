@@ -27,49 +27,58 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 
 
     function connectTo($mode) {
-	$this->Lexer->addSpecialPattern('\[alphalist .*?\]',$mode,'plugin_alphalist');
+	$this->Lexer->addSpecialPattern('\[alphalist.*?\]',$mode,'plugin_alphalist');
     }
 
     function handle($match, $state, $pos, &$handler)
     {
+	global $ID;
+
 
 	$alphalist =& plugin_load('helper', 'alphalist');
 
+	//remove [alphalistSPACE 
+	$match = substr($match, 11);
 	//remove ]
 	$match = substr($match, 0, -1);
-	$explode = explode(' ', $match);
-	//remove [alphalist
-	array_shift($explode);
 
-	//join if splitet between {
-	
 	$pages = array();
-	$j = 0;
-	for($i=0;$i<count($explode);$i++,$j++)
+
+	// [alphalist] sytax
+	if($match == false)
 	{
-	    $pages[$j] = $explode[$i]; 
-	    //there is { in string
-	    if(strstr($explode[$i], '{') != false)
+	    $pages[0][] = '';
+	    $pages[1][] = '';
+	} else
+	{
+
+	    preg_match_all('/([a-zA-Z0-9:_\-]*)(?:\{([^\}]+)\})?/', $match, $matches);
+
+
+	    //remove empty matches
+	    $k=0;
+	    for($i=0;$i<count($matches[0]);$i++)
 	    {
-		//start imploding
-		do
+		if(!empty($matches[0][$i]))
 		{
-		    $i++;
-		    $pages[$j] .= ' '.$explode[$i];
-		} while(strstr($explode[$i], '}') == false);
+		    for($j=1;$j<count($matches);$j++)
+		    {
+			$pages[$j-1][$k] = $matches[$j][$i];
+		    }
+		    $k++;
+		}
 	    }
 	}
+	
 
 	$list = array();
-	foreach($pages as $v)
+	for($i=0;$i<count($pages[0]);$i++)
 	{
-	    $section = false;
+	    if(empty($pages[0][$i]))
+		$v = $ID;
+
 	    //Get section
-	    if(preg_match('/^(.*?)\{(.*?)\}$/', $v, $data))
-	    {
-		$v = $data[1];
-		$section = $data[2];
-	    }
+	    $section = $pages[1][$i];
 
 	    $file = wikiFN($v);
 	    if(file_exists($file))
