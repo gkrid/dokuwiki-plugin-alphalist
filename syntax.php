@@ -71,6 +71,8 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 		}
 	    }
 	}
+
+	dbglog($pages, 'alphalist syntax $pages');
 	
 
 	$list = array();
@@ -121,6 +123,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 		}
 	    }
 	}
+	dbglog($pages, 'alphalist syntax $list');
 	return $list;
     }
 

@@ -36,7 +36,13 @@ class helper_plugin_alphalist extends dokuwiki_plugin
     function parse($string)
     {
 	$info = array();
-	return p_render('xhtml',p_get_instructions($string),$info);
+	$rendered = p_render('xhtml',p_get_instructions($string),$info);
+
+	dbglog($string, 'alphalist helper::parse before');
+	dbglog($rendered, 'alphalist helper::parse after');
+
+	return $rendered;
+	
     }
     function plain($string)
     {
@@ -44,6 +50,10 @@ class helper_plugin_alphalist extends dokuwiki_plugin
 	$plain = str_replace($doku_inline_tags, '', $string);
 	$req_link = '/\[\[(.*?\|)?/';
 	$plain = preg_replace($req_link, '', $plain);
+
+	dbglog($string, 'alphalist helper::plain before');
+	dbglog(trim($plain), 'alphalist helper::plain after');
+
 	return trim($plain);
     }
 }
