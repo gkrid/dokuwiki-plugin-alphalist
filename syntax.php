@@ -34,6 +34,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
     {
 	global $ID;
 
+	dbglog($match, 'alphalist syntax $match');
 
 	$alphalist =& plugin_load('helper', 'alphalist');
 
@@ -43,6 +44,8 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 	$match = substr($match, 0, -1);
 
 	$match = trim($match);
+
+	dbglog($match, 'alphalist syntax $match after processing');
 
 	$pages = array();
 
