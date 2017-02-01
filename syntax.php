@@ -30,7 +30,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 	$this->Lexer->addSpecialPattern('\[alphalist.*?\]',$mode,'plugin_alphalist');
     }
 
-    function handle($match, $state, $pos, &$handler)
+    function handle($match, $state, $pos, Doku_Handler $handler)
     {
 	global $ID;
 
@@ -130,7 +130,7 @@ class syntax_plugin_alphalist extends DokuWiki_Syntax_Plugin {
 	return $list;
     }
 
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
 	setlocale(LC_COLLATE, $this->getConf('locale'));
         if($mode == 'xhtml') {
 
