@@ -1,7 +1,7 @@
 base alphalist
 author Szymon Olewniczak
-email (my first name) [at] imz [dot] re
-date 2013-06-10
+email solewniczak@rid.pl
+date 2013-07-10
 name alphalist
 desc Combine several dokuwiki list to alphabetical list.
 url http://www.dokuwiki.org/plugin:alphalist
